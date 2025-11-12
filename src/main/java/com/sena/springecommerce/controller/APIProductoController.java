@@ -26,68 +26,70 @@ public class APIProductoController {
 
 	@Autowired
 	private IProductoService productoService;
-	
+
 	@Autowired
 	private IUsuarioService usuarioService;
-	
-	//Endoint GET para obtener todos los productos
-@GetMapping("/list")
+
+	// Endoint GET para obtener todos los productos
+	@GetMapping("/list")
 	public List<Producto> getAllProducts() {
-	   return productoService.findAll();
-	   
+		return productoService.findAll();
+
 	}
 
-  //Endpoint GET para obtener un producto por ID
-@GetMapping("/product/{id}")
-public ResponseEntity<Producto> getProductoById(@PathVariable Integer id){
-	Optional<Producto> producto = productoService.get(id);
-	return producto.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-}
+	// Endpoint GET para obtener un producto por ID
+	@GetMapping("/product/{id}")
+	public ResponseEntity<Producto> getProductoById(@PathVariable Integer id) {
+		Optional<Producto> producto = productoService.get(id);
+		return producto.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	}
 
 //Endpoint POST para crear un nnuevo producto
-@PostMapping("/create")
-public ResponseEntity<Producto> createProduct(@RequestBody Producto producto) {
-	Usuario u = usuarioService.findById(1).get();
-	producto.setUsuario(u);
-	if(producto.getImagen()== null) {
-		producto.setImagen("default.jpg");
-	}
-	Producto savedProduct = productoService.save(producto);
-	return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+	@PostMapping("/create")
+	public ResponseEntity<Producto> createProduct(@RequestBody Producto producto) {
+		Usuario u = usuarioService.findById(1).get();
+		producto.setUsuario(u);
+		if (producto.getImagen() == null) {
+			producto.setImagen("default.jpg");
+		}
+		Producto savedProduct = productoService.save(producto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
 
-    }
-    // Endpoint PUT para actualizar un producto
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Producto> updateProduct(@PathVariable Integer id, @RequestBody Producto productDetails) {
-    	Optional<Producto> producto = productoService.get(id);
-    	if (!producto.isPresent()) {
-    		return ResponseEntity.notFound().build();
-    	}
-    	Producto existingProduct = producto.get();
-    	existingProduct.setNombre(productDetails.getNombre());
-    	existingProduct.setDescripcion(productDetails.getDescripcion());
-    	existingProduct.setPrecio(productDetails.getPrecio());
-    	existingProduct.setCantidad(productDetails.getCantidad());
-    	// Mantener ña iamgen existente a menos que se envie una nueva 
-    	if (productDetails.getImagen() != null) {
-    		existingProduct.setImagen(productDetails.getImagen());
-    	}
-    	productoService.update(existingProduct);
-    	return ResponseEntity.ok(existingProduct);
-    }
-    
-    //Endpoint DELETE para eliminar un producto
-    @DeleteMapping("/delere/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
-    	Optional<Producto> producto = productoService.get(id);
-    	if (!producto.isPresent()) {
-    		return ResponseEntity.notFound().build();
-    	}
-    	Producto p = producto.get();
-    	if (!p.getImagen().equals("default.jpg")) {
-    		//
-    	}
-    	productoService.delete(id);
-    	return ResponseEntity.ok().build();
-    }
-}	
+	}
+
+	// Endpoint PUT para actualizar un producto
+	@PutMapping("/update/{id}")
+	public ResponseEntity<Producto> updateProduct(@PathVariable Integer id, @RequestBody Producto productDetails) {
+		Optional<Producto> producto = productoService.get(id);
+		if (!producto.isPresent()) {
+			return ResponseEntity.notFound().build();
+		}
+		Producto existingProduct = producto.get();
+		existingProduct.setNombre(productDetails.getNombre());
+		existingProduct.setDescripcion(productDetails.getDescripcion());
+		existingProduct.setPrecio(productDetails.getPrecio());
+		existingProduct.setCantidad(productDetails.getCantidad());
+		// Mantener ña iamgen existente a menos que se envie una nueva
+		if (productDetails.getImagen() != null) {
+			existingProduct.setImagen(productDetails.getImagen());
+		}
+		productoService.update(existingProduct);
+		return ResponseEntity.ok(existingProduct);
+	}
+
+	// Endpoint DELETE para eliminar un producto
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<?> deleteProduct(@PathVariable Integer id) {
+		Optional<Producto> producto = productoService.get(id);
+		if (!producto.isPresent()) {
+			return ResponseEntity.notFound().build();
+		}
+		Producto p = producto.get();
+		if (!p.getImagen().equals("default.jpg")) {
+			//
+		}
+		productoService.delete(id);
+
+		return ResponseEntity.ok().build();
+	}
+}
